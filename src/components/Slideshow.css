@@ -135,4 +135,15 @@
   .message-text {
     font-size: 1.5rem;
   }
+
+  .collage-actions {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .collage-actions .btn-sm {
+    width: 100%;
+    font-size: 1rem;
+    padding: 1rem;
+  }
 }
