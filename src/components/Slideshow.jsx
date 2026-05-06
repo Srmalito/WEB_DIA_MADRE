@@ -56,9 +56,8 @@ const Collage = ({ images, dedication, onBack, onReset }) => {
   const handleDownload = async () => {
     if (slideshowRef.current) {
       try {
-        // Hide controls before capture
-        const controls = document.querySelector('.collage-controls-overlay');
-        if (controls) controls.style.display = 'none';
+        const controls = document.querySelectorAll('.collage-controls-overlay');
+        controls.forEach(c => c.style.display = 'none');
 
         const canvas = await html2canvas(slideshowRef.current, {
           useCORS: true,
@@ -71,8 +70,7 @@ const Collage = ({ images, dedication, onBack, onReset }) => {
         link.href = url;
         link.click();
 
-        // Restore controls
-        if (controls) controls.style.display = 'flex';
+        controls.forEach(c => c.style.display = 'flex');
       } catch (error) {
         console.error('Error generating image', error);
       }
@@ -94,8 +92,8 @@ const Collage = ({ images, dedication, onBack, onReset }) => {
       // Si hay fotos, lo ideal es intentar enviar la imagen directamente a WhatsApp
       if (images.length > 0) {
         try {
-          const controls = document.querySelector('.collage-controls-overlay');
-          if (controls) controls.style.display = 'none';
+          const controls = document.querySelectorAll('.collage-controls-overlay');
+          controls.forEach(c => c.style.display = 'none');
 
           const canvas = await html2canvas(slideshowRef.current, {
             useCORS: true,
@@ -103,7 +101,7 @@ const Collage = ({ images, dedication, onBack, onReset }) => {
             backgroundColor: '#fffafb'
           });
 
-          if (controls) controls.style.display = 'flex';
+          controls.forEach(c => c.style.display = 'flex');
 
           canvas.toBlob(async (blob) => {
             const file = new File([blob], 'Sorpresa.png', { type: 'image/png' });
@@ -114,7 +112,6 @@ const Collage = ({ images, dedication, onBack, onReset }) => {
                 files: [file]
               });
             } else {
-              // Fallback si el navegador no soporta compartir archivos
               await navigator.share({
                 title: 'Sorpresa Día de la Madre',
                 text: 'Tengo una sorpresa para ti ❤️ Ábrela aquí:',
@@ -127,7 +124,6 @@ const Collage = ({ images, dedication, onBack, onReset }) => {
           console.error('Error sharing image', error);
         }
       } else {
-        // No hay fotos, solo compartimos el link mágico
         navigator.share({
           title: 'Sorpresa Día de la Madre',
           text: 'Tengo una sorpresa muy especial para ti ❤️ Ábrela aquí:',
@@ -135,7 +131,6 @@ const Collage = ({ images, dedication, onBack, onReset }) => {
         }).catch(console.error);
       }
     } else {
-      // Copiar al portapapeles si no hay Web Share API (en PC por ejemplo)
       try {
         await navigator.clipboard.writeText(`Tengo una sorpresa muy especial para ti ❤️ Ábrela aquí: ${shareUrl}`);
         alert("¡Enlace copiado al portapapeles! Pégalo en WhatsApp.");
@@ -145,7 +140,6 @@ const Collage = ({ images, dedication, onBack, onReset }) => {
     }
   };
 
-  // Predefined scattered positions to keep the center relatively clean
   const getTransform = (index) => {
     const positions = [
       { top: '5%', left: '5%', rotate: -15 },
@@ -211,7 +205,7 @@ const Collage = ({ images, dedication, onBack, onReset }) => {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: images.length * 0.3 + 0.5, duration: 1 }}
       >
-        <h1 className="cursive text-accent text-center title-feliz text-gradient">¡Feliz Día de la Madre!</h1>
+        <h1 className="cursive text-accent text-center title-feliz">¡Feliz Día de la Madre!</h1>
         <p className="message-text cursive text-center">"{dedication}"</p>
         
         <div className="collage-actions collage-controls-overlay">
