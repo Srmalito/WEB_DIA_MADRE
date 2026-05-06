@@ -79,15 +79,69 @@ const Collage = ({ images, dedication, onBack, onReset }) => {
     }
   };
 
-  const handleShare = () => {
+  const handleShare = async () => {
+    let shareUrl = window.location.href.split('?')[0];
+
+    // Si no hay fotos, podemos simplemente compartir el link con la dedicatoria encriptada
+    if (images.length === 0 && dedication) {
+      try {
+        const encoded = btoa(unescape(encodeURIComponent(dedication)));
+        shareUrl = `${shareUrl}?d=${encoded}`;
+      } catch (e) {}
+    }
+
     if (navigator.share) {
-      navigator.share({
-        title: 'Para mi Mamá',
-        text: 'Mira esta sorpresa que preparé para ti.',
-        url: window.location.href
-      }).catch(console.error);
+      // Si hay fotos, lo ideal es intentar enviar la imagen directamente a WhatsApp
+      if (images.length > 0) {
+        try {
+          const controls = document.querySelector('.collage-controls-overlay');
+          if (controls) controls.style.display = 'none';
+
+          const canvas = await html2canvas(slideshowRef.current, {
+            useCORS: true,
+            scale: 2,
+            backgroundColor: '#fffafb'
+          });
+
+          if (controls) controls.style.display = 'flex';
+
+          canvas.toBlob(async (blob) => {
+            const file = new File([blob], 'Sorpresa.png', { type: 'image/png' });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+              await navigator.share({
+                title: 'Sorpresa Día de la Madre',
+                text: 'Mira esta sorpresa que preparé para ti ❤️',
+                files: [file]
+              });
+            } else {
+              // Fallback si el navegador no soporta compartir archivos
+              await navigator.share({
+                title: 'Sorpresa Día de la Madre',
+                text: 'Tengo una sorpresa para ti ❤️ Ábrela aquí:',
+                url: shareUrl
+              });
+              alert("Tu navegador no pudo adjuntar la imagen automáticamente. Recuerda usar el botón 'Guardar' para enviarle la foto.");
+            }
+          });
+        } catch (error) {
+          console.error('Error sharing image', error);
+        }
+      } else {
+        // No hay fotos, solo compartimos el link mágico
+        navigator.share({
+          title: 'Sorpresa Día de la Madre',
+          text: 'Tengo una sorpresa muy especial para ti ❤️ Ábrela aquí:',
+          url: shareUrl
+        }).catch(console.error);
+      }
     } else {
-      alert('La función de compartir no está disponible en este navegador.');
+      // Copiar al portapapeles si no hay Web Share API (en PC por ejemplo)
+      try {
+        await navigator.clipboard.writeText(`Tengo una sorpresa muy especial para ti ❤️ Ábrela aquí: ${shareUrl}`);
+        alert("¡Enlace copiado al portapapeles! Pégalo en WhatsApp.");
+      } catch (e) {
+        alert('La función de compartir no está disponible en este navegador.');
+      }
     }
   };
 

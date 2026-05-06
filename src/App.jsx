@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import SetupForm from './components/SetupForm';
 import Preview from './components/Preview';
@@ -9,6 +9,20 @@ function App() {
   const [step, setStep] = useState('form'); // 'form', 'preview', 'slideshow'
   const [images, setImages] = useState([]);
   const [dedication, setDedication] = useState('');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const d = params.get('d');
+    if (d) {
+      try {
+        const decoded = decodeURIComponent(escape(atob(d)));
+        setDedication(decoded);
+        setStep('slideshow');
+      } catch(e) {
+        console.error("Failed to parse dedication");
+      }
+    }
+  }, []);
 
   const handleStartSlideshow = () => {
     setStep('slideshow');
