@@ -161,6 +161,9 @@ const SetupForm = ({ images, setImages, dedication, setDedication, onPreview, on
           </button>
         </div>
       </div>
+      <div className="developer-credit text-center" style={{ marginTop: '2rem', opacity: 0.6, fontSize: '0.9rem' }}>
+        Hecho con ❤️ por Luis Romero
+      </div>
     </motion.div>
   );
 };
