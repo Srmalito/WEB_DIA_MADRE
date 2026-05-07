@@ -162,7 +162,7 @@ const SetupForm = ({ images, setImages, dedication, setDedication, onPreview, on
         </div>
       </div>
       <div className="developer-credit text-center" style={{ marginTop: '2rem', opacity: 0.6, fontSize: '0.9rem' }}>
-        Hecho con ❤️ por Luis Romero
+        Hecho con ❤️ por <a href="https://www.linkedin.com/in/fernando-romero-9492013ba/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>Luis Romero</a>
       </div>
     </motion.div>
   );
