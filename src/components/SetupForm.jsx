@@ -17,9 +17,18 @@ const QUICK_EMOJIS = ["❤️", "💖", "💕", "💝", "🌹", "💐", "🌸", 
 const SetupForm = ({ images, setImages, dedication, setDedication, onPreview, onStart }) => {
   const [showIdeas, setShowIdeas] = useState(false);
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const files = Array.from(e.target.files);
-    const newImages = files.map(file => URL.createObjectURL(file));
+    
+    const readAsDataURL = (file) => {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(file);
+      });
+    };
+
+    const newImages = await Promise.all(files.map(file => readAsDataURL(file)));
     setImages(prev => [...prev, ...newImages].slice(0, 10)); // Max 10 images
   };
 
